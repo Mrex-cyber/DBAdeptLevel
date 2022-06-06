@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace DBTrainingAdeptLevel
@@ -8,7 +8,8 @@ namespace DBTrainingAdeptLevel
         static void Main()
         {
             using (ApplicationContext appContext = new ApplicationContext())
-            {                        
+            {        
+                // Connections
                 Position manager = new Position { Name = "Manager" };
                 Position developer = new Position { Name = "Developer" };
                 appContext.Positions.AddRange(manager, developer);
@@ -23,10 +24,32 @@ namespace DBTrainingAdeptLevel
                 Company google = new Company { Name = "Google", Country = usa };
                 appContext.Companies.AddRange(microsoft, google);
 
-                User tom = new User { Name = "Tom", Company = microsoft, Position = manager };
-                User bob = new User { Name = "Bob", Company = google, Position = developer };
-                User alice = new User { Name = "Alice", Company = microsoft, Position = developer };
-                User kate = new User { Name = "Kate", Company = google, Position = manager };
+                User tom = new() { Company = microsoft, Position = manager, 
+                    UserProfile = new (){ 
+                        Name = new () { Key = "Name", Value = "Tom"}, 
+                        Age = new NameAndAge { Key = "Age", Value = "24" } 
+                    } 
+                };
+                User bob = new() { Company = google, Position = developer, UserProfile = new()
+                {
+                    Name = new() { Key = "Name", Value = "Bob" },
+                    Age = new NameAndAge { Key = "Age", Value = "49" }
+                }
+                };
+                User alice = new() { Company = microsoft, Position = developer,
+                    UserProfile = new()
+                    {
+                        Name = new() { Key = "Name", Value = "Alice" },
+                        Age = new NameAndAge { Key = "Age", Value = "32" }
+                    }
+                };
+                User kate = new() { Company = google, Position = manager,
+                    UserProfile = new()
+                    {
+                        Name = new() { Key = "Name", Value = "Kate" },
+                        Age = new NameAndAge { Key = "Age", Value = "19" }
+                    }
+                };
                 appContext.Users.AddRange(tom, bob, alice, kate);
 
                 appContext.SaveChanges();
@@ -40,13 +63,14 @@ namespace DBTrainingAdeptLevel
 
                 foreach (var user in users)
                 {
-                    Console.WriteLine($"{user.Id}. {user.Name} - {user.Position?.Name}");
+                    Console.WriteLine($"{user.Id}. {user.UserProfile.Name?.Value}, {user.UserProfile.Age?.Value} - {user.Position?.Name}");
                     Console.WriteLine($"Company is: {user.Company!.Name}");
                     Console.WriteLine($"Country is: {user.Company.Country!.Name}");
                     Console.WriteLine($"Capital is: {user.Company.Country.Capital!.Name}");
                     Console.WriteLine("--------------------------------");
                 }
 
+                // Many to many
                 Console.WriteLine("UNIVERSITY");
                 Course math = new Course { Name = "Math" };
                 Course english = new Course { Name = "English" };
@@ -83,6 +107,35 @@ namespace DBTrainingAdeptLevel
                         Console.WriteLine(course.Name);
                     }
                     Console.WriteLine("----------------------------");
+                }
+                // Hierarchy
+
+                MenuItem file = new MenuItem { Title = "File" };
+                MenuItem edit = new MenuItem { Title = "Edit" };
+                MenuItem open = new MenuItem { Title = "Open", Parent = file };
+                MenuItem save = new MenuItem { Title = "Save", Parent = file };
+
+                MenuItem copy = new MenuItem { Title = "Copy", Parent = edit };
+                MenuItem paste = new MenuItem { Title = "Paste", Parent = edit };
+
+                appContext.MenuItems.AddRange(file, edit, open, save, copy, paste);
+                appContext.SaveChanges();
+
+                var menuItems = appContext.MenuItems.ToList();
+                Console.WriteLine("All Menu:");
+                foreach (MenuItem m in menuItems)
+                {
+                    Console.WriteLine(m.Title);
+                }
+                Console.WriteLine();               
+                var fileMenu = appContext.MenuItems.FirstOrDefault(m => m.Title == "File");
+                if (fileMenu != null)
+                {
+                    Console.WriteLine(fileMenu.Title);
+                    foreach (var m in fileMenu.Childrens)
+                    {
+                        Console.WriteLine($"---{m.Title}");
+                    }
                 }
             }
         }
