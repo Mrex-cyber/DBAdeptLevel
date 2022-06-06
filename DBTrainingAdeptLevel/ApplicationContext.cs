@@ -15,6 +15,8 @@ namespace DBTrainingAdeptLevel
         public DbSet<Student> Students { get; set; } = null!;
         public DbSet<Course> Courses { get; set; } = null!;
 
+        public DbSet<MenuItem> MenuItems { get; set; } = null!;
+
         public ApplicationContext()
         {
             Database.EnsureDeleted();
@@ -36,7 +38,7 @@ namespace DBTrainingAdeptLevel
             builder.Entity<Student>();
             builder.Entity<Course>();
 
-            
+            builder.Entity<MenuItem>();
         }
     }
 }
