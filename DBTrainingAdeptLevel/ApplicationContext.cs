@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DBTrainingAdeptLevel
@@ -27,7 +27,7 @@ namespace DBTrainingAdeptLevel
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<User>();
+            builder.Entity<User>().OwnsOne(u => u.UserProfile, p => { p.OwnsOne(n => n.Name); p.OwnsOne(a => a.Age); });
             builder.Entity<Company>();
             builder.Entity<Position>();
             builder.Entity<Country>();
@@ -35,6 +35,8 @@ namespace DBTrainingAdeptLevel
 
             builder.Entity<Student>();
             builder.Entity<Course>();
+
+            
         }
     }
 }
