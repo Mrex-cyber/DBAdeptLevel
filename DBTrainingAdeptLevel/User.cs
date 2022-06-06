@@ -1,7 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace DBTrainingAdeptLevel
 {
+    // Hierarchy
+    public class MenuItem
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public List<MenuItem>? Childrens { get; set; }
+        public int? ParentId { get; set; }
+        public MenuItem? Parent { get; set; }
+    }
+
     // Many to many
     public class Student
     {
@@ -47,11 +57,22 @@ namespace DBTrainingAdeptLevel
     }
     public class User
     {
-        public int Id { get; set; }
-        public string? Name { get; set; }
+        public int Id { get; set; }      
         public int? CompanyId { get; set; }
         public Company? Company { get; set; }
         public int? PositionId { get; set; }
-        public Position? Position { get; set; }
+        public Position? Position { get; set; }        
+        public UserProfile UserProfile { get; set; }
+    }
+
+    public class UserProfile
+    {
+        public NameAndAge? Name { get; set; }
+        public NameAndAge? Age { get; set; }
+    }
+    public class NameAndAge
+    {
+        public string? Key { get; set; }
+        public string? Value { get; set; }
     }
 }
